@@ -1,581 +1,697 @@
-# Research and Implementation Plan
+# Implementation Plan
 
-## Financial Domain Adaptation and Fine-Tuning of Large Language Models
+## Financial Domain-Specific LLM Fine-Tuning
 
-**Project Type:** Applied Machine Learning / LLM Research
+**Project Type:** Applied AI / Machine Learning Engineering
 
-**Primary Focus:** Domain-Adaptive Pretraining, Supervised Fine-Tuning, Parameter-Efficient Fine-Tuning, and Financial NLP Evaluation.
-
----
-
-# 1. Project Vision
-
-The objective is to investigate how adapting general-purpose Large Language Models to financial-domain data affects their performance on specialized financial NLP tasks.
-
-The project will follow a research-driven implementation process, beginning with understanding existing literature and datasets, followed by baseline evaluation, model adaptation, controlled experimentation, and comparative analysis.
-
-The final outcome should demonstrate both theoretical understanding and practical implementation of modern LLM fine-tuning techniques.
-
-# 2. Research Questions
-
-The project will investigate the following questions.
-
-### RQ1 — Domain Adaptation
-
-Does continued pretraining on financial-domain text improve a general-purpose LLM's ability to understand financial terminology and documents?
-
-### RQ2 — Fine-Tuning Strategies
-
-How do LoRA and QLoRA compare in terms of downstream performance, computational cost, and memory consumption?
-
-### RQ3 — Sequential Adaptation
-
-Does performing Domain-Adaptive Pretraining before Supervised Fine-Tuning provide improvements over direct Supervised Fine-Tuning?
-
-### RQ4 — Task Generalization
-
-Do improvements obtained through financial fine-tuning generalize across sentiment analysis, financial question answering, information extraction, and numerical reasoning?
-
-### RQ5 — Computational Efficiency
-
-What trade-offs exist between model quality, training time, memory consumption, and inference latency?
-
-# 3. Research Hypotheses
-
-The following hypotheses will guide experimentation.
-
-- H1: Exposure to financial-domain text can improve domain-specific language modeling performance.
-- H2: Financial SFT can improve downstream performance on financial instruction-following tasks.
-- H3: QLoRA can achieve competitive downstream performance with lower memory requirements than conventional LoRA configurations.
-- H4: DAPT followed by SFT may outperform direct SFT on selected financial tasks.
-- H5: Improvements may vary across tasks, particularly between linguistic understanding and numerical reasoning.
-
-These hypotheses must be tested empirically.
-
-# 4. Phase-Wise Execution Plan
-
-## Phase 1 — Literature Review and Conceptual Understanding
-
-**Objective:** Understand the theoretical foundation of LLM adaptation and financial NLP.
-
-### Topics to Study
-
-#### A. Transformer Architecture
-- Transformer architecture.
-- Self-attention mechanism.
-- Multi-head attention.
-- Positional embeddings.
-- Tokenization.
-- Causal language modeling.
-
-#### B. LLM Pretraining
-- Autoregressive language modeling.
-- Next-token prediction.
-- Pretraining datasets.
-- Training objectives.
-- Scaling and model capacity.
-
-#### C. Domain Adaptation
-- Domain-Adaptive Pretraining.
-- Continued pretraining.
-- Task-Adaptive Pretraining.
-- Domain shift.
-- Catastrophic forgetting.
-
-#### D. Fine-Tuning
-- Full-parameter fine-tuning.
-- Supervised Fine-Tuning.
-- Instruction tuning.
-- Parameter-efficient fine-tuning.
-
-#### E. LoRA and QLoRA
-- Low-rank matrix decomposition.
-- Rank and scaling factor.
-- Adapter weights.
-- Quantization.
-- NF4 quantization.
-- Double quantization.
-- Memory optimization.
-
-### Expected Deliverables
-
-- Literature review notes.
-- Technical notes on DAPT and SFT.
-- LoRA and QLoRA implementation understanding.
-- Initial research bibliography.
+**Primary Focus:** LLM Fine-Tuning, PEFT, Model Evaluation, Optimization, and Deployment.
 
 ---
 
-## Phase 2 — Dataset Research and Acquisition
+# 1. Project Goal
 
-**Objective:** Identify and prepare appropriate financial datasets.
+Build an end-to-end financial-domain-adapted LLM by fine-tuning an existing open-source language model.
 
-### Dataset Investigation
+The model should be capable of performing specialized financial NLP tasks, including question answering, sentiment analysis, financial information extraction, summarization, and numerical reasoning.
 
-#### 1. Financial PhraseBank
-Purpose: Financial sentiment classification.
+The implementation will emphasize practical ML engineering, reproducible training pipelines, measurable model improvements, and deployment.
 
-#### 2. FiQA
-Purpose: Financial sentiment and question answering.
+# 2. Development Strategy
 
-#### 3. FinQA
-Purpose: Numerical reasoning over financial reports.
+The project will follow this implementation sequence:
 
-#### 4. ConvFinQA
-Purpose: Multi-turn financial question answering.
+```text
+Environment Setup
+       |
+       v
+Dataset Engineering
+       |
+       v
+Baseline Model
+       |
+       v
+Supervised Fine-Tuning
+       |
+       v
+LoRA and QLoRA
+       |
+       v
+Model Evaluation
+       |
+       v
+Inference Optimization
+       |
+       v
+FastAPI Backend
+       |
+       v
+React Application
+       |
+       v
+Deployment
+```
 
-#### 5. SEC EDGAR
-Purpose: Building a financial-domain corpus for continued pretraining.
+Domain-Adaptive Pretraining will be treated as an advanced extension after the primary SFT pipeline works.
+
+# 3. Phase 1 — Environment and Infrastructure Setup
+
+## Objective
+
+Prepare the local development environment and cloud training environment.
+
+### Local Environment
+
+Hardware:
+
+- Apple M4.
+- 16 GB unified memory.
+- 512 GB SSD.
+
+Software:
+
+- Python 3.11.
+- MLX.
+- MLX-LM.
+- Hugging Face Transformers.
+- Hugging Face Datasets.
+- Pandas.
+- NumPy.
+- Scikit-learn.
+- JupyterLab.
+- Weights & Biases.
+
+### Cloud Environment
+
+Use an NVIDIA GPU instance for intensive model training.
+
+Preferred GPU:
+
+- A100 40 GB.
+- L4 24 GB as a more economical alternative.
+
+Software:
+
+- PyTorch.
+- CUDA-compatible Transformers.
+- PEFT.
+- TRL.
+- BitsAndBytes.
+- Accelerate.
+- Weights & Biases.
 
 ### Tasks
 
-1. Inspect dataset structures.
-2. Understand dataset licenses and provenance.
-3. Identify available labels and annotations.
-4. Analyze class distributions.
-5. Identify duplicate and overlapping examples.
-6. Examine missing or malformed records.
-7. Standardize dataset schemas.
-8. Create reproducible preprocessing scripts.
+1. Create the GitHub repository.
+2. Set up the project directory.
+3. Configure Python virtual environments.
+4. Install local dependencies.
+5. Verify MLX acceleration.
+6. Prepare cloud GPU dependencies.
+7. Verify GPU and CUDA availability.
+8. Configure experiment tracking.
+9. Establish artifact storage conventions.
 
-### Data Separation
+### Deliverables
 
-Maintain independent:
-
-- Training dataset.
-- Validation dataset.
-- Test dataset.
-
-Where possible, use chronological document-level splits to reduce temporal leakage.
-
-Avoid putting multiple excerpts from the same source document into different splits.
-
-### Expected Deliverables
-
-- Dataset inventory.
-- Dataset documentation.
-- Raw data acquisition scripts.
-- Preprocessing pipeline.
-- Data quality report.
-- Train/validation/test splits.
+- Working local environment.
+- Working cloud environment.
+- Initial repository structure.
+- Dependency configuration.
+- Hardware verification documentation.
 
 ---
 
-## Phase 3 — Baseline Model Selection and Evaluation
+# 4. Phase 2 — Financial Dataset Engineering
 
-**Objective:** Establish the performance of an unmodified general-purpose model.
+## Objective
 
-### Primary Research Model
+Collect, understand, clean, and prepare financial datasets for model training.
+
+### Dataset Sources
+
+**Financial PhraseBank**
+
+Used for financial sentiment classification.
+
+**FiQA**
+
+Used for financial sentiment and question answering.
+
+**FinQA**
+
+Used for numerical financial reasoning.
+
+**ConvFinQA**
+
+Used for conversational financial question answering.
+
+**SEC EDGAR**
+
+Used as a potential source of financial documents for summarization and advanced domain adaptation.
+
+### Tasks
+
+1. Download permitted datasets.
+2. Inspect dataset schemas.
+3. Analyze sample records.
+4. Identify missing values.
+5. Remove duplicates.
+6. Normalize text.
+7. Identify malformed records.
+8. Standardize data formats.
+9. Convert examples into task-specific schemas.
+10. Create reproducible train, validation, and test splits.
+
+### Dataset Formatting
+
+Instruction-based examples should follow a consistent format.
+
+Example:
+
+```json
+{
+  "instruction": "Analyze the financial sentiment.",
+  "input": "The company reported a significant increase in annual revenue.",
+  "output": "Positive"
+}
+```
+
+Question-answering examples should preserve their supporting financial context.
+
+Extraction examples should use consistent structured output schemas.
+
+### Data Quality Checks
+
+- Duplicate detection.
+- Invalid example filtering.
+- Label distribution analysis.
+- Token-length analysis.
+- Source document tracking.
+- Train/test contamination checks.
+
+### Deliverables
+
+- Dataset ingestion scripts.
+- Cleaning and transformation pipeline.
+- Standardized training datasets.
+- Dataset documentation.
+- Data quality report.
+
+---
+
+# 5. Phase 3 — Baseline Model Implementation
+
+## Objective
+
+Load a pretrained model and establish its performance before fine-tuning.
+
+### Model Selection
+
+Primary cloud model:
 
 Qwen2.5-3B Base.
 
-Model: https://huggingface.co/Qwen/Qwen2.5-3B
-
-### Local Development Model
+Local development model:
 
 Qwen2.5-1.5B-Instruct.
 
-Model: https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct
-
 ### Tasks
 
-1. Understand model architecture and tokenizer.
-2. Load the model locally or through cloud infrastructure.
-3. Verify inference.
-4. Prepare task-specific evaluation prompts.
-5. Evaluate the unmodified model.
-6. Save predictions and metrics.
-7. Document baseline limitations.
+1. Load the pretrained model.
+2. Load the corresponding tokenizer.
+3. Verify model inference.
+4. Prepare evaluation prompts.
+5. Implement task-specific output parsing.
+6. Run baseline evaluations.
+7. Save predictions.
+8. Calculate performance metrics.
 
 ### Evaluation
 
-- Sentiment classification accuracy and F1.
-- Financial QA Exact Match and token F1.
-- Numerical reasoning accuracy.
-- Information extraction F1.
-- Summarization evaluation.
+- Financial sentiment classification.
+- Financial question answering.
+- Financial information extraction.
+- Numerical financial reasoning.
+- Financial summarization.
 
-Use task-appropriate prompts and consistent output parsing.
+### Deliverables
 
-### Expected Deliverables
+- Baseline inference scripts.
+- Evaluation pipeline.
+- Baseline metrics.
+- Prediction artifacts.
+- Model configuration.
 
-- Baseline inference implementation.
-- Baseline evaluation scripts.
-- Baseline results.
-- Model selection rationale.
-
----
-
-## Phase 4 — Domain-Adaptive Pretraining
-
-**Objective:** Investigate whether exposure to financial-domain language improves the model's domain understanding.
-
-### Data Sources
-
-- Annual financial reports.
-- SEC filings.
-- Financial statements.
-- Earnings call transcripts.
-- Other appropriately licensed financial documents.
-
-### Preprocessing
-
-1. Extract text.
-2. Remove irrelevant formatting.
-3. Normalize whitespace.
-4. Remove duplicates.
-5. Filter low-quality documents.
-6. Preserve document metadata.
-7. Tokenize using the selected model tokenizer.
-8. Prepare causal language modeling sequences.
-
-### Training Objective
-
-Continue training the pretrained model using the causal language modeling objective.
-
-The model learns to predict subsequent tokens in financial-domain text.
-
-### Initial Training Configuration
-
-- Base model: Qwen2.5-3B.
-- Sequence length: Initially 1024, increasing if resources permit.
-- Precision: BF16 where supported.
-- Learning rate: Small, validated through pilot experiments.
-- Training: Controlled continuation of language-model pretraining.
-
-Investigate full-parameter continued pretraining versus parameter-efficient continued adaptation depending on compute availability.
-
-### Evaluation
-
-- Financial-domain validation loss.
-- General-domain validation loss.
-- Downstream financial benchmark performance.
-- Signs of catastrophic forgetting.
-
-### Expected Deliverables
-
-- Curated financial corpus.
-- DAPT training pipeline.
-- Adapted model checkpoint or adapter.
-- Training logs.
-- Evaluation report.
+The baseline must be established before fine-tuning so that later improvements can be measured accurately.
 
 ---
 
-## Phase 5 — Supervised Fine-Tuning
+# 6. Phase 4 — Supervised Fine-Tuning
 
-**Objective:** Teach the model to perform specialized financial tasks.
+## Objective
+
+Adapt the pretrained model to perform financial-domain tasks using labeled instruction-response data.
+
+### Training Framework
+
+- PyTorch.
+- Hugging Face Transformers.
+- TRL.
+- Hugging Face Datasets.
 
 ### Training Tasks
 
 1. Financial question answering.
-2. Financial sentiment classification.
-3. Structured financial information extraction.
-4. Financial document summarization.
+2. Financial sentiment analysis.
+3. Financial information extraction.
+4. Financial summarization.
 
-### Dataset Formatting
+### Tasks
 
-Convert source datasets into consistent instruction-response formats.
+1. Prepare instruction datasets.
+2. Apply the model's chat template where applicable.
+3. Configure tokenization.
+4. Prepare training and validation datasets.
+5. Configure supervised fine-tuning.
+6. Train an initial adapter.
+7. Monitor training and validation loss.
+8. Save checkpoints.
+9. Run evaluation.
 
-Each example should contain:
+### Initial Training Configuration
 
-- Instruction.
-- Input context.
-- Expected response.
+| Parameter | Value |
+|---|---|
+| Model | Qwen2.5-3B Base |
+| Training Method | SFT |
+| Sequence Length | 2048 |
+| Precision | BF16 where supported |
+| Learning Rate | 2e-4 starting point |
+| Epochs | 2–3 |
+| Scheduler | Cosine |
+| Warmup Ratio | 0.03 |
 
-For structured extraction, enforce a documented JSON schema.
+These settings will be validated through pilot runs and adjusted according to the dataset and hardware.
 
-For numerical reasoning, preserve the supporting evidence and expected numerical result.
+### Deliverables
 
-### Initial Training Strategy
+- SFT training pipeline.
+- Fine-tuned model adapter.
+- Training logs.
+- Evaluation results.
 
-Implement SFT using Hugging Face Transformers and TRL.
+---
 
-Begin with LoRA.
+# 7. Phase 5 — Parameter-Efficient Fine-Tuning
 
-Then investigate QLoRA using a 4-bit quantized base model.
+## Objective
 
-### Initial LoRA Configuration
+Implement and compare LoRA and QLoRA.
 
-| Parameter | Initial Setting |
+### A. LoRA
+
+Implement Low-Rank Adaptation.
+
+Study and configure:
+
+- Rank.
+- Alpha.
+- Dropout.
+- Target modules.
+- Trainable parameters.
+- Adapter saving and loading.
+
+Initial configuration:
+
+| Parameter | Value |
 |---|---|
 | Rank | 16 |
 | Alpha | 32 |
 | Dropout | 0.05 |
 | Learning Rate | 2e-4 |
-| Sequence Length | 2048 |
-| Micro Batch Size | 1 |
-| Gradient Accumulation | 16 |
-| Epochs | 2–3 |
-| Scheduler | Cosine |
 
-These settings are starting points. Validate them through pilot training runs.
+### B. QLoRA
 
-### Expected Deliverables
+Implement quantized fine-tuning.
 
-- Financial instruction dataset.
-- SFT training scripts.
-- LoRA adapter.
-- QLoRA adapter.
-- Training configurations.
-- Experiment logs.
+Study:
 
----
+- 4-bit quantization.
+- NF4.
+- Double quantization.
+- Compute dtype.
+- Quantized model loading.
+- Memory optimization.
 
-## Phase 6 — Comparative Experiments
+### Tasks
 
-**Objective:** Compare adaptation strategies under controlled conditions.
+1. Train LoRA adapters.
+2. Train QLoRA adapters.
+3. Measure training memory.
+4. Measure training duration.
+5. Compare adapter sizes.
+6. Compare downstream performance.
+7. Record experiment configurations.
 
-### Experiment Matrix
+### Deliverables
 
-| ID | Model Configuration |
-|---|---|
-| E0 | Original pretrained model |
-| E1 | Original model + SFT with LoRA |
-| E2 | Original model + SFT with QLoRA |
-| E3 | DAPT + SFT |
-| E4 | Comparative and ablation experiments |
-
-Use the same primary model family and evaluation datasets wherever possible.
-
-Control training data, data splits, evaluation prompts, and random seeds.
-
-### Comparisons
-
-- Performance differences.
-- Training duration.
-- GPU memory usage.
-- Trainable parameter count.
-- Model size.
-- Inference latency.
-
-### Expected Deliverables
-
-- Experiment tracking dashboard.
-- Comparative benchmark tables.
-- Performance plots.
-- Ablation study.
-- Experiment analysis report.
+- LoRA implementation.
+- QLoRA implementation.
+- Adapter artifacts.
+- Experiment comparison report.
 
 ---
 
-## Phase 7 — Model Evaluation and Error Analysis
+# 8. Phase 6 — Advanced Domain Adaptation
 
-**Objective:** Determine whether the adapted models provide meaningful improvements.
+## Objective
+
+Investigate whether continued pretraining on financial text improves the model's downstream performance.
+
+This phase is an advanced enhancement and should only begin after the SFT pipeline is stable.
+
+### Domain-Adaptive Pretraining
+
+Use a curated corpus containing financial-domain text.
+
+Potential sources:
+
+- SEC filings.
+- Financial statements.
+- Annual reports.
+- Earnings transcripts.
+
+### Tasks
+
+1. Prepare the financial corpus.
+2. Remove duplicate and low-quality content.
+3. Tokenize documents.
+4. Configure causal language modeling.
+5. Continue pretraining the selected base model.
+6. Monitor validation loss.
+7. Save the adapted checkpoint.
+8. Apply supervised fine-tuning.
+9. Evaluate the resulting model.
+
+### Comparison
+
+Compare:
+
+- Original model + SFT.
+- DAPT model + SFT.
+
+Also monitor general-domain performance to detect catastrophic forgetting.
+
+### Deliverables
+
+- DAPT pipeline.
+- Domain-adapted checkpoint.
+- DAPT training logs.
+- Downstream evaluation comparison.
+
+---
+
+# 9. Phase 7 — Model Evaluation and Benchmarking
+
+## Objective
+
+Measure the effectiveness of the fine-tuned model.
 
 ### Metrics
 
-| Task | Metrics |
+| Capability | Metrics |
 |---|---|
-| Sentiment | Accuracy, Precision, Recall, F1 |
+| Sentiment Analysis | Accuracy, Precision, Recall, F1 |
 | Financial QA | Exact Match, Token F1 |
-| Numerical Reasoning | Numerical Accuracy, Execution Accuracy |
 | Information Extraction | Precision, Recall, F1 |
+| Numerical Reasoning | Numerical Accuracy, Execution Accuracy |
 | Summarization | ROUGE-L, Human Evaluation |
+
+### System-Level Metrics
+
+- Training time.
+- GPU memory consumption.
+- Trainable parameter count.
+- Adapter size.
+- Inference latency.
+- Throughput.
 
 ### Error Analysis
 
-Investigate:
+Identify:
 
-- Incorrect financial terminology.
-- Hallucinated financial figures.
-- Incorrect numerical calculations.
+- Incorrect financial figures.
+- Hallucinated information.
+- Incorrect calculations.
 - Missing extracted fields.
-- Incorrect sentiment classification.
-- Unsupported statements in summaries.
+- Incorrect sentiment.
+- Unsupported summaries.
 
-For numerical reasoning, independently execute generated calculations and verify their answers.
+### Deliverables
 
-### Generalization
-
-Evaluate the possibility of performance degradation on general-domain tasks after domain adaptation.
-
-Document both improvements and regressions.
-
-### Expected Deliverables
-
-- Evaluation framework.
+- Benchmarking scripts.
+- Comparative evaluation tables.
+- Performance visualizations.
 - Error analysis report.
-- Final benchmark results.
-- Limitations analysis.
 
 ---
 
-## Phase 8 — Inference and Deployment
+# 10. Phase 8 — Model Optimization and Inference
 
-**Objective:** Make the resulting model accessible through a reproducible inference interface.
+## Objective
 
-### Backend
+Prepare the adapted model for efficient inference.
 
-Use FastAPI.
+### Tasks
 
-### Endpoints
+1. Load trained adapters.
+2. Test adapter merging where supported.
+3. Investigate model quantization.
+4. Measure inference latency.
+5. Measure memory consumption.
+6. Compare inference configurations.
+7. Implement model loading and caching.
+8. Optimize response generation.
 
-- `/predict/sentiment`
-- `/predict/qa`
-- `/predict/extraction`
-- `/predict/summarization`
-- `/health`
+### Deliverables
+
+- Optimized model configuration.
+- Inference benchmarks.
+- Model artifact documentation.
+
+---
+
+# 11. Phase 9 — Backend Development
+
+## Objective
+
+Expose the fine-tuned model through a production-oriented inference API.
+
+### Technology
+
+- FastAPI.
+- Python.
+- Pydantic.
+- Uvicorn.
+
+### API Endpoints
+
+| Endpoint | Responsibility |
+|---|---|
+| GET `/health` | Health check |
+| POST `/predict/sentiment` | Financial sentiment |
+| POST `/predict/qa` | Financial question answering |
+| POST `/predict/extraction` | Structured extraction |
+| POST `/predict/summarization` | Document summarization |
 
 ### Features
 
-- Model loading.
+- Model loading and lifecycle management.
 - Input validation.
-- Structured JSON responses.
+- Structured responses.
 - Error handling.
 - Request logging.
 - Inference timing.
+- Configurable model selection.
 
-### Deployment
+### Deliverables
 
-- Docker containerization.
-- Model artifact management.
+- FastAPI application.
+- Request and response schemas.
 - API documentation.
-- Basic demonstration interface.
-
-The inference service should clearly distinguish model-generated outputs from independently verified calculations.
-
-### Expected Deliverables
-
-- Inference API.
-- Docker configuration.
-- API documentation.
-- Demonstration interface.
+- Inference integration tests.
 
 ---
 
-## Phase 9 — Research Documentation and Final Analysis
+# 12. Phase 10 — Frontend Development
 
-**Objective:** Document the methodology, experiments, findings, and limitations.
+## Objective
 
-### Final Documentation
+Build a clean interface demonstrating the model's financial capabilities.
 
-1. Research motivation.
-2. Related work.
-3. Dataset methodology.
-4. Model architecture.
-5. Domain-adaptation methodology.
-6. Fine-tuning methodology.
-7. Experimental setup.
-8. Evaluation methodology.
-9. Results and comparisons.
-10. Error analysis.
-11. Limitations.
-12. Future work.
+### Technology
+
+- React.
+- JavaScript.
+- Tailwind CSS.
+
+### Main Interface Modules
+
+**1. Dashboard**
+
+Overview of the available financial AI capabilities.
+
+**2. Financial Assistant**
+
+Ask financial questions using supplied document context.
+
+**3. Sentiment Analysis**
+
+Submit financial statements or news text for classification.
+
+**4. Document Analysis**
+
+Upload financial documents and extract structured information.
+
+**5. Summarization**
+
+Generate summaries of financial reports.
+
+**6. Model Information**
+
+Display the active model, adaptation method, and available benchmark metrics.
+
+### UX Requirements
+
+- Clear input and output hierarchy.
+- Loading and error states.
+- Structured financial outputs.
+- Copyable results.
+- Responsive layouts.
+- Transparent model limitations.
+
+### Deliverables
+
+- React application.
+- API integration.
+- Financial AI dashboard.
+
+---
+
+# 13. Phase 11 — Deployment
+
+## Objective
+
+Package the complete application for reproducible execution.
+
+### Components
+
+- Model inference service.
+- FastAPI backend.
+- React frontend.
+- Docker configuration.
+
+### Tasks
+
+1. Create Dockerfiles.
+2. Configure environment variables.
+3. Configure model artifact locations.
+4. Connect the frontend and backend.
+5. Add service health checks.
+6. Test complete application workflows.
+7. Document deployment instructions.
+
+### Deliverables
+
+- Dockerized application.
+- Deployment instructions.
+- Environment configuration.
+- Demonstration deployment.
+
+---
+
+# 14. Phase 12 — Final Documentation
+
+## Objective
+
+Document the engineering implementation and its measured results.
+
+### Documentation
+
+- System architecture.
+- Dataset pipeline.
+- Model selection.
+- Fine-tuning implementation.
+- LoRA and QLoRA comparison.
+- Evaluation methodology.
+- Performance benchmarks.
+- Inference optimization.
+- Deployment instructions.
+- Known limitations.
 
 ### Final Deliverables
 
-- Complete source code.
-- Reproducible experiment configurations.
-- Dataset documentation.
-- Model adapters and artifacts.
-- Benchmark results.
-- Technical report.
-- Final README.
+- Complete GitHub repository.
+- Reproducible training scripts.
+- Fine-tuned model adapters.
+- Evaluation results.
+- Inference API.
+- Frontend application.
+- Docker deployment.
+- Technical documentation.
 
 ---
 
-# 5. Hardware and Compute Strategy
+# 15. Suggested Timeline
 
-## Local Machine
-
-Apple MacBook M4, 16 GB unified memory, 512 GB storage.
-
-Use for:
-
-- Data exploration.
-- Dataset preprocessing.
-- Tokenization.
-- Small-model inference.
-- Lightweight MLX-LM experiments.
-- Evaluation development.
-- API development.
-
-## Cloud Infrastructure
-
-Preferred: NVIDIA A100 40 GB.
-
-Alternative: NVIDIA L4 24 GB.
-
-Use for:
-
-- Primary 3B model experiments.
-- DAPT.
-- SFT.
-- LoRA and QLoRA comparisons.
-- Larger evaluation workloads.
-
-Start with short pilot runs before allocating substantial GPU time.
-
----
-
-# 6. Suggested Timeline
-
-The project should be implemented incrementally.
-
-| Phase | Estimated Duration |
+| Phase | Duration |
 |---|---|
-| Literature review | 1 week |
-| Dataset investigation | 1 week |
-| Baseline evaluation | 3–4 days |
-| DAPT experiments | 1–2 weeks |
-| SFT implementation | 1 week |
-| Comparative experiments | 1 week |
-| Evaluation and analysis | 1 week |
-| API and deployment | 3–4 days |
-| Documentation | 3–4 days |
+| Environment Setup | 2–3 days |
+| Dataset Engineering | 5–7 days |
+| Baseline Implementation | 3–4 days |
+| SFT Implementation | 5–7 days |
+| LoRA and QLoRA | 4–5 days |
+| Advanced DAPT | 5–7 days |
+| Evaluation and Optimization | 4–5 days |
+| Backend Development | 3–4 days |
+| Frontend Development | 4–5 days |
+| Deployment and Documentation | 3–4 days |
 
-**Estimated total: 7–9 weeks**, depending on dataset preparation, compute availability, and experiment duration.
-
-The timeline is flexible. Research quality takes priority over completing every experiment quickly.
-
----
-
-# 7. Success Criteria
-
-The project will be considered technically complete when:
-
-- A reproducible dataset pipeline exists.
-- A pretrained baseline has been evaluated.
-- At least one financial SFT model has been trained.
-- LoRA and QLoRA have been investigated.
-- DAPT has been implemented or its feasibility documented through controlled experiments.
-- Adapted models have been evaluated on held-out benchmarks.
-- Computational efficiency has been measured.
-- Results are reproducible and documented.
-- A working inference API is available.
-
-A positive performance improvement is not a prerequisite for scientific success. A carefully controlled negative result is also a valid research finding.
+**Estimated duration: 6–8 weeks** for a focused implementation, with additional time for advanced DAPT experiments.
 
 ---
 
-# 8. Development Principles
+# 16. Completion Criteria
 
-1. Understand each technique before implementing it.
-2. Avoid blindly copying fine-tuning tutorials.
-3. Keep data preparation separate from model training.
+The project will be considered complete when:
+
+- [ ] Financial dataset pipeline is implemented.
+- [ ] Pretrained baseline is evaluated.
+- [ ] Financial SFT is implemented.
+- [ ] LoRA fine-tuning is implemented.
+- [ ] QLoRA fine-tuning is implemented.
+- [ ] Model performance is benchmarked.
+- [ ] Inference optimization is measured.
+- [ ] FastAPI inference service is operational.
+- [ ] React frontend is integrated.
+- [ ] Docker deployment works.
+- [ ] Documentation and setup instructions are complete.
+
+Advanced DAPT is an additional milestone rather than a blocker for the core application.
+
+---
+
+# 17. Development Principles
+
+1. Prioritize the actual ML model over the user interface.
+2. Understand the fine-tuning process instead of blindly executing scripts.
+3. Keep training and inference code modular.
 4. Maintain reproducible experiment configurations.
-5. Never evaluate on training data.
-6. Report actual results without exaggeration.
-7. Track compute consumption.
-8. Document failed experiments and technical decisions.
-9. Keep model checkpoints and datasets outside Git.
-10. Prioritize experimental rigor over the number of features.
+5. Never claim performance improvements without measurements.
+6. Track compute costs and memory usage.
+7. Keep model checkpoints outside Git.
+8. Validate numerical outputs independently.
+9. Document limitations and failure cases.
+10. Build incrementally and maintain a working application at every major milestone.
 
----
-
-# 9. Immediate Next Steps
-
-Before beginning model training:
-
-- [ ] Create the GitHub repository.
-- [ ] Set up the local Python environment.
-- [ ] Study Transformer architecture and causal language modeling.
-- [ ] Study DAPT, SFT, LoRA, and QLoRA.
-- [ ] Investigate the selected financial datasets.
-- [ ] Finalize the primary research model.
-- [ ] Prepare the baseline evaluation methodology.
-
-**Current Status:** Planning and research preparation.
-
-**Next Milestone:** Complete the literature review and dataset investigation before implementing the baseline evaluation.
+**Final Goal:** Deliver a complete, fine-tuned financial-domain LLM with measurable performance, an optimized inference pipeline, a backend API, and an interactive application.

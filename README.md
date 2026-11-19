@@ -1,181 +1,207 @@
-# Financial Domain Adaptation and Fine-Tuning of Large Language Models
+# Financial Domain-Specific LLM Fine-Tuning
+
+An end-to-end Large Language Model engineering project focused on adapting open-source LLMs to financial-domain tasks through supervised fine-tuning and parameter-efficient fine-tuning techniques.
 
 ## Overview
 
-This project investigates the effectiveness of domain adaptation and parameter-efficient fine-tuning techniques in improving the performance of general-purpose Large Language Models (LLMs) on financial natural language processing and reasoning tasks.
+This project aims to develop a financial-domain-adapted Large Language Model capable of understanding financial terminology, processing financial documents, answering domain-specific questions, extracting structured financial information, and performing financial sentiment analysis.
 
-The primary objective is to study whether continued pretraining on financial-domain corpora, followed by supervised fine-tuning, can improve a model's ability to understand financial terminology, interpret financial documents, extract structured information, perform financial sentiment analysis, and answer questions involving numerical financial data.
+The implementation focuses on the complete LLM engineering lifecycle, including dataset engineering, model selection, supervised fine-tuning, parameter-efficient adaptation, model evaluation, inference optimization, and deployment.
 
-Rather than developing another general-purpose financial chatbot, this project focuses on the underlying model adaptation process, experimental methodology, and quantitative evaluation of fine-tuned models.
+Rather than building a generic financial chatbot using an external LLM API, the project involves fine-tuning an open-source pretrained model and deploying the resulting model through a dedicated inference service.
 
-## Research Motivation
+## Objectives
 
-General-purpose LLMs possess broad linguistic and reasoning capabilities but may struggle with domain-specific terminology, financial document structures, numerical relationships, and specialized financial reasoning tasks.
+- Adapt a general-purpose pretrained LLM to financial-domain tasks.
+- Build a reproducible financial dataset preparation pipeline.
+- Implement Supervised Fine-Tuning (SFT).
+- Apply LoRA and QLoRA for parameter-efficient fine-tuning.
+- Evaluate fine-tuned models against pretrained baselines.
+- Optimize model inference and memory consumption.
+- Develop a FastAPI-based inference service.
+- Build an interactive financial document analysis application.
+- Containerize and deploy the complete system.
 
-Financial language presents several challenges:
+## Core Capabilities
 
-- Domain-specific terminology and abbreviations.
-- Complex financial statements and reporting structures.
-- Numerical reasoning involving multiple financial variables.
-- Context-dependent financial sentiment.
-- Long-form financial documents and earnings reports.
+### 1. Financial Question Answering
 
-This project investigates whether domain-specific adaptation can address these limitations without requiring the computational resources associated with training an LLM from scratch.
+Answer questions based on financial documents, reports, statements, and supplied financial context.
 
-## Research Question
+Example:
 
-**Can domain-adaptive pretraining and parameter-efficient fine-tuning improve the performance of general-purpose LLMs on financial language understanding, information extraction, and numerical reasoning tasks?**
+**Input:**
+What was the company's revenue growth between the two reported financial years?
 
-### Research Objectives
+**Expected Output:**
+A structured answer containing the relevant financial figures, calculation, and explanation.
 
-1. Establish baseline performance of a pretrained general-purpose LLM on financial benchmarks.
-2. Construct a curated financial-domain corpus for continued pretraining.
-3. Investigate Domain-Adaptive Pretraining (DAPT).
-4. Implement Supervised Fine-Tuning (SFT) using financial instruction datasets.
-5. Compare LoRA and QLoRA fine-tuning strategies.
-6. Investigate the combined effect of DAPT followed by SFT.
-7. Evaluate adapted models using task-specific quantitative metrics.
-8. Analyze computational efficiency, inference latency, and memory consumption.
+### 2. Financial Sentiment Analysis
 
-## Research Scope
+Classify financial statements, news excerpts, and market-related text into:
 
-The project focuses on four major financial NLP capabilities.
+- Positive
+- Negative
+- Neutral
 
-| Capability | Description |
-|---|---|
-| Financial Sentiment Analysis | Classifying financial statements and news into positive, negative, and neutral sentiment |
-| Financial Question Answering | Answering questions based on financial reports and documents |
-| Financial Information Extraction | Extracting financial entities, metrics, and structured numerical information |
-| Financial Summarization | Producing concise summaries of financial documents and earnings reports |
+### 3. Financial Information Extraction
 
-Numerical reasoning will be evaluated separately from general financial question answering to distinguish language understanding from computational correctness.
+Extract structured financial information from unstructured documents.
 
-## Proposed Methodology
+Supported information may include:
 
-The research follows a controlled experimental approach.
+- Revenue
+- Net income
+- Operating expenses
+- Earnings per share (EPS)
+- Total assets
+- Total liabilities
+- Debt
+- Profit margins
 
-### 1. Baseline Evaluation
+Outputs will follow a predefined JSON schema.
 
-Evaluate an unmodified pretrained language model on selected financial NLP benchmarks.
+### 4. Financial Document Summarization
 
-This establishes the reference performance against which all adapted models will be compared.
+Generate structured summaries of financial documents, including:
 
-### 2. Domain-Adaptive Pretraining (DAPT)
+- Financial performance.
+- Revenue and profitability.
+- Important financial metrics.
+- Significant changes.
+- Potential risk factors.
+- Key management observations.
 
-Continue training the pretrained model using an unlabeled financial-domain corpus.
+### 5. Numerical Financial Reasoning
 
-Potential sources include:
+Answer questions involving numerical information from financial reports.
 
-- SEC EDGAR filings.
-- Annual reports.
-- Financial statements.
-- Earnings call transcripts.
-- Financial research documents.
+The system will distinguish model-generated reasoning from independently validated numerical calculations.
 
-The objective is to investigate whether exposure to financial-domain language improves domain-specific understanding.
+## Technical Architecture
 
-### 3. Supervised Fine-Tuning (SFT)
-
-Fine-tune the pretrained model using financial instruction-response datasets.
-
-Training tasks include:
-
-- Financial question answering.
-- Financial sentiment classification.
-- Structured information extraction.
-- Financial summarization.
-
-### 4. Parameter-Efficient Fine-Tuning
-
-Investigate and compare:
-
-- LoRA (Low-Rank Adaptation).
-- QLoRA (Quantized Low-Rank Adaptation).
-
-The experiments will investigate trainable parameter counts, memory requirements, training time, and downstream performance.
-
-### 5. Combined Domain Adaptation
-
-Investigate a sequential adaptation pipeline:
-
-Pretrained Model → DAPT → SFT → Financial Evaluation
-
-Compare this against direct SFT without DAPT.
-
-## Experimental Design
-
-The initial experimental matrix consists of:
-
-| Experiment | Training Strategy |
-|---|---|
-| E0 | Original pretrained model |
-| E1 | SFT with LoRA |
-| E2 | SFT with QLoRA |
-| E3 | DAPT followed by SFT |
-| E4 | Comparative evaluation and ablation analysis |
-
-Where computationally feasible, additional experiments will compare conventional LoRA and QLoRA under controlled configurations.
+```text
+                  Financial Datasets
+                         |
+                         v
+                Data Engineering
+                         |
+             Cleaning and Transformation
+                         |
+                         v
+                  Tokenization
+                         |
+                         v
+                Pretrained LLM
+                         |
+                         v
+              Fine-Tuning Pipeline
+                         |
+                 +-------+-------+
+                 |               |
+                LoRA           QLoRA
+                 |               |
+                 +-------+-------+
+                         |
+                         v
+                 Fine-Tuned Model
+                         |
+                         v
+               Model Evaluation
+                         |
+                         v
+                 Model Optimization
+                         |
+                         v
+                 FastAPI Backend
+                         |
+                         v
+                Financial AI UI
+                         |
+                         v
+                  Docker Deployment
+```
 
 ## Model Selection
 
-The primary research model will initially be:
+### Primary Model
 
 **Qwen2.5-3B Base**
 
-Model repository: https://huggingface.co/Qwen/Qwen2.5-3B
+Model: https://huggingface.co/Qwen/Qwen2.5-3B
 
-Reasons for selection:
+The model will serve as the primary candidate for cloud-based fine-tuning experiments.
 
-- Relatively manageable parameter count.
-- Suitable for controlled fine-tuning experiments.
+Selection considerations:
+
+- Manageable parameter count.
 - Open-weight availability.
-- Compatibility with common Hugging Face training workflows.
-- Practical deployment requirements compared with larger models.
+- Compatibility with Hugging Face Transformers.
+- Suitability for parameter-efficient fine-tuning.
+- Practical inference requirements.
 
-A smaller model, Qwen2.5-1.5B-Instruct, will be used for local experimentation on Apple Silicon.
+### Local Development Model
 
-Model selection and licensing will be verified before training.
+**Qwen2.5-1.5B-Instruct**
+
+Model: https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct
+
+Used for local inference, pipeline validation, and lightweight fine-tuning experiments on Apple Silicon.
+
+Model licenses and architecture compatibility will be verified before implementation.
+
+## Fine-Tuning Methodology
+
+### Supervised Fine-Tuning (SFT)
+
+The primary adaptation method will be Supervised Fine-Tuning using curated financial instruction-response datasets.
+
+Training tasks will include:
+
+- Financial question answering.
+- Sentiment classification.
+- Information extraction.
+- Financial summarization.
+
+### LoRA
+
+Low-Rank Adaptation will be used to fine-tune selected model parameters through trainable low-rank adapter matrices.
+
+Benefits:
+
+- Reduced trainable parameter count.
+- Lower memory requirements than full fine-tuning.
+- Smaller model adaptation artifacts.
+- Convenient experimentation.
+
+### QLoRA
+
+Quantized Low-Rank Adaptation will be investigated using a quantized base model and trainable low-rank adapters.
+
+The objective is to reduce training memory requirements while maintaining useful downstream performance.
+
+### Domain-Adaptive Pretraining (Advanced)
+
+As an optional enhancement, continued pretraining on financial-domain text may be implemented before supervised fine-tuning.
+
+This will investigate whether exposure to financial documents improves downstream domain-specific capabilities.
 
 ## Dataset Sources
 
-Potential datasets include:
-
-| Dataset | Application |
+| Dataset | Purpose |
 |---|---|
-| Financial PhraseBank | Financial sentiment analysis |
-| FiQA | Financial question answering and sentiment |
+| Financial PhraseBank | Financial sentiment classification |
+| FiQA | Financial sentiment and question answering |
 | FinQA | Numerical financial reasoning |
-| ConvFinQA | Conversational financial reasoning |
-| SEC EDGAR | Financial-domain pretraining corpus |
+| ConvFinQA | Conversational financial question answering |
+| SEC EDGAR | Financial document collection |
 
-Dataset licenses, provenance, splits, and usage restrictions will be examined before inclusion.
-
-## Evaluation Methodology
-
-Different tasks will be evaluated using appropriate metrics.
-
-| Task | Evaluation Metrics |
-|---|---|
-| Sentiment Analysis | Accuracy, Precision, Recall, F1-score |
-| Financial QA | Exact Match, Token-level F1 |
-| Numerical Reasoning | Numerical Accuracy, Execution Accuracy |
-| Information Extraction | Precision, Recall, F1-score |
-| Summarization | ROUGE-L, Human Evaluation |
-
-Additional system-level measurements:
-
-- Training duration.
-- Peak GPU memory consumption.
-- Trainable parameter count.
-- Model artifact size.
-- Inference latency.
-- Throughput.
-
-All models will be evaluated against identical held-out test sets wherever the task and dataset permit.
+Dataset licenses, provenance, usage restrictions, and benchmark splits will be reviewed before use.
 
 ## Technology Stack
 
-### Machine Learning
+### Machine Learning and Fine-Tuning
+
 - Python
 - PyTorch
 - Hugging Face Transformers
@@ -186,35 +212,92 @@ All models will be evaluated against identical held-out test sets wherever the t
 - MLX / MLX-LM
 
 ### Data Processing
+
 - Pandas
 - NumPy
 - Scikit-learn
 
 ### Experiment Tracking
+
 - Weights & Biases
 
-### Model Serving
-- FastAPI
-- Docker
+### Backend
 
-### Development Environment
-- Apple Silicon MacBook
-- Google Colab / NVIDIA GPU cloud instances
-- Jupyter Notebook
-- Git and GitHub
+- FastAPI
+- Pydantic
+- Uvicorn
+
+### Frontend
+
+- React
+- JavaScript
+- Tailwind CSS
+
+### Infrastructure
+
+- Docker
+- Git
+- GitHub
+- NVIDIA Cloud GPUs
 
 ## Hardware Strategy
 
-Local development and lightweight experiments will be performed on an Apple Silicon M4 MacBook with 16 GB unified memory.
+### Local Development
 
-Cloud GPU resources will be used for computationally intensive experiments.
+Apple MacBook M4 with 16 GB unified memory and 512 GB storage.
 
-Proposed cloud hardware:
+Local responsibilities:
 
-- NVIDIA L4 (24 GB VRAM) for smaller experiments.
-- NVIDIA A100 (40 GB VRAM) for primary fine-tuning experiments.
+- Dataset exploration and preprocessing.
+- Tokenization.
+- Baseline inference.
+- Lightweight MLX-LM experiments.
+- Evaluation pipeline development.
+- Backend and frontend development.
 
-The final hardware configuration will depend on model memory requirements, sequence length, and training strategy.
+### Cloud Training
+
+Cloud GPUs will be used for computationally intensive training.
+
+Preferred hardware:
+
+- NVIDIA L4 (24 GB VRAM).
+- NVIDIA A100 (40 GB VRAM).
+
+The GPU configuration will be selected according to model size, sequence length, batch size, and memory requirements.
+
+## Evaluation
+
+Fine-tuned models will be compared against their original pretrained baselines.
+
+| Task | Metrics |
+|---|---|
+| Sentiment Analysis | Accuracy, Precision, Recall, F1 |
+| Financial QA | Exact Match, Token F1 |
+| Information Extraction | Precision, Recall, F1 |
+| Numerical Reasoning | Numerical Accuracy, Execution Accuracy |
+| Summarization | ROUGE-L, Human Evaluation |
+
+Additional system measurements:
+
+- Training duration.
+- GPU memory consumption.
+- Trainable parameter count.
+- Adapter size.
+- Inference latency.
+- Throughput.
+
+## API Capabilities
+
+The FastAPI inference service will expose the following endpoints:
+
+| Endpoint | Function |
+|---|---|
+| `/health` | Service health |
+| `/predict/sentiment` | Financial sentiment analysis |
+| `/predict/qa` | Financial question answering |
+| `/predict/extraction` | Financial information extraction |
+| `/predict/summarization` | Financial document summarization |
 
 ## Repository Structure
 
@@ -234,9 +317,9 @@ financial-domain-llm/
 │
 ├── notebooks/
 │   ├── 01_data_exploration.ipynb
-│   ├── 02_dataset_analysis.ipynb
+│   ├── 02_dataset_preparation.ipynb
 │   ├── 03_baseline_evaluation.ipynb
-│   └── 04_experiment_analysis.ipynb
+│   └── 04_model_evaluation.ipynb
 │
 ├── src/
 │   ├── data/
@@ -247,18 +330,20 @@ financial-domain-llm/
 │
 ├── experiments/
 │   ├── baseline/
-│   ├── dapt/
 │   ├── lora/
-│   └── qlora/
+│   ├── qlora/
+│   └── dapt/
 │
 ├── models/
 │
 ├── api/
 │
+├── frontend/
+│
 ├── tests/
 │
 ├── docs/
-│   ├── research/
+│   ├── implementation/
 │   ├── experiments/
 │   └── results/
 │
@@ -268,40 +353,33 @@ financial-domain-llm/
 └── .gitignore
 ```
 
-Model checkpoints and large datasets will be maintained outside Git and referenced through documented artifact locations.
+Large datasets, pretrained checkpoints, and generated model artifacts will be excluded from Git and managed separately.
 
-## Expected Contributions
+## Expected Deliverables
 
-The expected outcome is a reproducible experimental study and engineering implementation that provides:
+1. Financial dataset engineering pipeline.
+2. Pretrained baseline model and evaluation pipeline.
+3. Financial-domain SFT implementation.
+4. LoRA and QLoRA adapters.
+5. Comparative model evaluation.
+6. Optimized inference pipeline.
+7. FastAPI model-serving backend.
+8. Interactive financial AI application.
+9. Dockerized deployment.
+10. Technical documentation and reproducible configurations.
 
-1. A curated financial-domain dataset pipeline.
-2. Baseline evaluation of a general-purpose LLM.
-3. Implementations of DAPT, SFT, LoRA, and QLoRA.
-4. Comparative benchmark results.
-5. An analysis of domain adaptation effectiveness.
-6. Computational efficiency comparisons.
-7. Reproducible training and evaluation configurations.
-8. An inference interface for demonstrating the adapted model.
+## Project Limitations
 
-These are intended contributions; their effectiveness will be established through experiments rather than assumed in advance.
+- Model outputs may contain incorrect financial information.
+- Numerical outputs require independent verification.
+- Fine-tuning does not guarantee reliable investment advice.
+- Financial data quality directly influences model performance.
+- Performance improvements must be established through evaluation rather than assumed.
 
-## Research Principles
+This project is intended for educational and engineering demonstration purposes, not production financial decision-making.
 
-- Reproducibility of experiments.
-- Dataset provenance and license compliance.
-- Separation of training, validation, and test data.
-- Controlled experimental comparisons.
-- Transparent reporting of negative as well as positive results.
-- No unsupported claims about model performance.
+## Current Status
 
-## Limitations
+**Status:** Planning and environment preparation.
 
-Financial language understanding does not automatically imply financial expertise or reliable investment advice.
-
-Numerical outputs must be independently validated. The model may generate incorrect information, and the project is intended for research and educational purposes rather than production financial decision-making.
-
-## Project Status
-
-**Status:** Research planning and environment preparation.
-
-Implementation will proceed incrementally, beginning with literature review, dataset investigation, and baseline model evaluation.
+**Next Milestone:** Local environment setup, financial dataset investigation, and baseline model implementation.
